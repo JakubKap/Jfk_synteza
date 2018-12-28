@@ -3,6 +3,7 @@
 *.html
 /lib
 Synthesis.iml
+/src/ClassAltered.java
 
 
 
