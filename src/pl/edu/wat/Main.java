@@ -2,6 +2,7 @@ package pl.edu.wat;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.BlockStmt;
@@ -21,8 +22,18 @@ public class Main {
             cu = JavaParser.parse(in);
         }
 
+        List<String> importNames = new ArrayList<>();
+        new ImportNamesCollector().visit(cu, importNames);
+        importNames.forEach(n -> System.out.println("Import Name Collected: " + n));
 
+    }
 
+    //zapisanie do kolekcji nazw importów
+    private static class ImportNamesCollector extends VoidVisitorAdapter<List<String>>{
+        public void visit(ImportDeclaration id, List<String> collector){
+            super.visit(id, collector);
+            collector.add(id.getNameAsString());
+        }
 
 
     }
