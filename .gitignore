@@ -1,4 +1,6 @@
 /.idea/*
+*.xml
+*.html
 /lib
 /out
 Synthesis.iml
