@@ -39,61 +39,73 @@ public class Main {
             if(im.importParts.size() > max)
                 max = im.importParts.size();
 
-    for(int i=0; i<max; i++) {
+        for(int i=0; i<max; i++) {
 
-        for (int j = 0; j < importStrings.size(); j++) {
-            if(importStrings.get(j).importParts.size() > i){
-                uniqueFirstPart.add(importStrings.get(j).importParts.get(i));
-                System.out.println("Added unique " + importStrings.get(j).importParts.get(i) + " for " + importStrings.get(j).toString());
+            for (int j = 0; j < importStrings.size(); j++) {
+                if(importStrings.get(j).importParts.size() > i){
+                    uniqueFirstPart.add(importStrings.get(j).importParts.get(i));
+                    System.out.println("Added unique " + importStrings.get(j).importParts.get(i) + " for " + importStrings.get(j).toString());
+                }
+
             }
 
+
+            for (String s : uniqueFirstPart) { //1 wybrany początek
+                System.out.println(s); //dla testu
+
+                for (Import in : importStrings) {
+
+                    if (in.importParts.size() > i+1) {
+                        if (in.importParts.get(i).equals(s)){
+                            importNamesPom.add(in);
+                        }
+                    }
+
+                }
+
+                for (Import im : importNamesPom)
+                    System.out.println(im.toString());
+
+                final int inc = i;
+                Collections.sort(importNamesPom, new Comparator<Import>() {
+                    @Override
+                    public int compare(Import i1, Import i2) {
+                        return i1.importParts.get(inc+1).compareTo(i2.importParts.get(inc+1));
+                    }
+                });
+
+                //wstawienie posortowanego zbioru do oryginału
+                int incI = 0;
+                int incP = 0;
+
+                for (Import in : importStrings) {
+                    if (in.importParts.size() > i+1) {
+                        if(in.importParts.get(i).equals(s)) {
+                            importStrings.set(incI, importNamesPom.get(incP));
+                            incP++;
+                        }
+                    }
+                    incI++;
+                }
+
+
+                importNamesPom.clear();
+            }
+            uniqueFirstPart.clear();
         }
 
 
-        for (String s : uniqueFirstPart) { //1 wybrany początek
-            System.out.println(s); //dla testu
+        //poprawki
 
-            for (Import in : importStrings) {
-
-                if (in.importParts.size() > i+1) {
-                    if (in.importParts.get(i).equals(s)){
-                        importNamesPom.add(in);
-                    }
-                }
+        for(int i=0; i<importStrings.size(); i++){
+            if((i+1) < importStrings.size()){
+                if(importStrings.get(i).toString().equals(importStrings.get(i+1).toString())
+                        && importStrings.get(i).isAsterisk
+                        && !importStrings.get(i+1).isAsterisk)
+                Collections.swap(importStrings, i, i+1);
 
             }
-
-            for (Import im : importNamesPom)
-                System.out.println(im.toString());
-
-            final int inc = i;
-            Collections.sort(importNamesPom, new Comparator<Import>() {
-                @Override
-                public int compare(Import i1, Import i2) {
-                    return i1.importParts.get(inc+1).compareTo(i2.importParts.get(inc+1));
-                }
-            });
-
-            //wstawienie posortowanego zbioru do oryginału
-            int incI = 0;
-            int incP = 0;
-
-            for (Import in : importStrings) {
-                if (in.importParts.size() > i+1) {
-                    if(in.importParts.get(i).equals(s)) {
-                        importStrings.set(incI, importNamesPom.get(incP));
-                        incP++;
-                    }
-                }
-                incI++;
-            }
-
-
-            importNamesPom.clear();
         }
-        uniqueFirstPart.clear();
-    }
-
     }
 
     public static Name returnFirstPart(ImportDeclaration id){
