@@ -8,6 +8,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.visitor.ModifierVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.printer.DotPrinter;
 
@@ -16,6 +17,11 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+
+    private static LinkedList<ImportDeclaration> importNames = new LinkedList<>();
+    //private static Map<Integer, ImportDeclaration> importNumberAndName = new HashMap<>();
+
+    //private static int numOfList = 0;
 
     public static Name returnFirstPart(ImportDeclaration id){
         Name firstPart = new Name("null");
@@ -37,7 +43,7 @@ public class Main {
         return firstPart;
     }
 
-    public static int findMinJava(LinkedList <ImportDeclaration> importNames){
+    public static int findMinJava(){
         int index= -1;
 
         for(int i=0; i<importNames.size(); i++){
@@ -48,7 +54,7 @@ public class Main {
             return index;
     }
 
-    public static int findMinNonJava(LinkedList <ImportDeclaration> importNames){
+    public static int findMinNonJava(){
         int index= -1;
 
         for(int i=0; i<importNames.size(); i++){
@@ -87,8 +93,7 @@ public class Main {
         }
 
 
-        LinkedList<ImportDeclaration> importNames = new LinkedList<>();
-        new ImportNamesCollector().visit(cu, importNames);
+        new ImportNamesCollector().visit(cu, null);
 
 
         importNames.forEach(n -> System.out.println("Import Name Collected: " + n.getNameAsString())); /*+
@@ -135,8 +140,20 @@ public class Main {
        }
 */
 
+        System.out.println("Testowe = " + importNames.get(6).getName());
 
-        new ReplaceImportDeclaration().visit(cu, importNames);
+/*
+        //utworzenie mapy
+        for(int i=0; i<importNames.size(); i++)
+            importNumberAndName.put(i,importNames.get(i));
+*/
+        //wypisanie mapy
+       /* for(Map.Entry<Integer, ImportDeclaration> entry : importNumberAndName.entrySet()){
+            System.out.println(entry.getKey() + "/" + entry.getValue());
+            new ReplaceImportDeclaration().visit(cu, entry.getKey());
+        }*/
+
+        //powoływanie za każdym razem nowego obiektu
 
 
 
@@ -149,6 +166,11 @@ public class Main {
 
        // new ReplaceImportDeclaration().visit(cu,importNames2);
 
+
+        for(int i=0; i<importNames.size(); i++){
+            cu.setImport(i, importNames.get(i));
+        }
+
         cu.getClassByName("Class").get().setName("ClassAltered");
         try(FileWriter output = new FileWriter(new File(alteredFileName), false)) {
             output.write(cu.toString());
@@ -157,33 +179,55 @@ public class Main {
         File[] files = {new File(alteredFileName)};
         String[] options = { "-d", "out//production//Synthesis" };
 
+        importNames.forEach(n -> System.out.println("LinkedList after change " + n));
+
+
+        //wypisanie mapy
+       /* for(Map.Entry<Integer, ImportDeclaration> entry : importNumberAndName.entrySet()){
+            System.out.println(entry.getKey() + "/" + entry.getValue());
+            new ReplaceImportDeclaration().visit(cu, entry.getKey());
+        }*/
+
 
     }
 
     //zapisanie do kolekcji wszystkich ImportDeclaration
-    private static class ImportNamesCollector extends VoidVisitorAdapter<LinkedList<ImportDeclaration>>{
-        public void visit(ImportDeclaration id, LinkedList<ImportDeclaration> collector){
-            super.visit(id, collector);
-            collector.add(id);
+    private static class ImportNamesCollector extends VoidVisitorAdapter<Void>{
+        @Override
+        public void visit(ImportDeclaration id, Void arg){
+            super.visit(id, null);
+
+            importNames.add(id);
         }
 
 
+
     }
+/*
+    private static class ReplaceImportDeclaration extends VoidVisitorAdapter<Integer> {
 
-    private static class ReplaceImportDeclaration extends VoidVisitorAdapter<LinkedList<ImportDeclaration>>{
-        public void visit(ImportDeclaration id, LinkedList<ImportDeclaration> importNames){
+        private int numOfImport = 0;
 
-            super.visit(id, importNames);
-            id.setName(importNames.getFirst().getName());
-            id.setStatic(importNames.getFirst().isStatic());
-            id.setAsterisk(importNames.getFirst().isAsterisk());
+        @Override
+        public void visit(ImportDeclaration id, Integer arg){
+            super.visit(id, arg);
 
+            if(numOfImport == arg) {
+                id.setName(importNumberAndName.get(arg).getName());
+                id.setStatic(importNumberAndName.get(arg).isStatic());
+                id.setAsterisk(importNumberAndName.get(arg).isAsterisk());
+                System.out.println(importNumberAndName.get(arg).getName() + " ,dla arg = " + arg);
 
-            System.out.println("Size of importNames = " + importNames.size());
-            System.out.println(importNames.getFirst());
+                //id.replace(importNumberAndName.get(arg));
+            }
+                //numOfList++;
 
-            importNames.removeFirst();
+                numOfImport++;
+            //System.out.println("Size of importNames = " + importNames.size());
+            //System.out.println(importNames.getFirst());
+
+            //System.out.print("Deleted = " + importNames.removeFirst());
 
         }
-    }
+    }*/
 }
