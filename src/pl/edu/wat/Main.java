@@ -32,15 +32,19 @@ public class Main {
         Set<String> uniqueFirstPart = new HashSet<>();
         LinkedList<Import> importNamesPom = new LinkedList<>();
 
+
+
         for(int i=0; i<importStrings.size(); i++){
             uniqueFirstPart.add(importStrings.get(i).importParts.get(0));
         }
+
+
         for (String s : uniqueFirstPart) { //1 wybrany początek
             System.out.println(s); //dla testu
 
             for(Import in : importStrings) {
 
-                if (in.importParts.get(0).equals(s))
+                if (in.importParts.get(0).equals(s) && in.importParts.size() > 1)
                     importNamesPom.add(in);
             }
 
@@ -59,7 +63,7 @@ public class Main {
             int incP=0;
 
             for(Import in : importStrings) {
-                if (in.importParts.get(0).equals(s)) {
+                if (in.importParts.get(0).equals(s) && in.importParts.size() > 1) {
                     importStrings.set(incI, importNamesPom.get(incP));
                     incP++;
                 }
@@ -145,13 +149,13 @@ public class Main {
         new ImportNamesCollector().visit(cu, null);
 
 
-        importNames.forEach(n -> System.out.println("Import Name Collected: " + n.getName()+
+        /*importNames.forEach(n -> System.out.println("Import Name Collected: " + n.getName()+
                 " ,Identifier = " + n.getName().getIdentifier()
                 + " ,getChildNodes() = " + n.getChildNodes()
         + " ,getChildNodes().get(0) = " + n.getChildNodes().get(0)
         + " ,getQualifier.getIdentifier() = " + n.getName().getQualifier().get().getIdentifier()));
        // + " ,getName().getQualifier().get().getQualifier() = " + n.getName().getQualifier().get().getQualifier().get().getQualifier()));
-
+*/
 
         //System.out.println("TESTTTT= " + importNames.get(2).getName().getQualifier().get().getQualifier().get().getQualifier().get().getIdentifier());
 

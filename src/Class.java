@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import javax.swing.*;
 import pl.edu.wat.Main;
 import pl.edu.wat.Main.*;
+import java.*;
 import java.awt.*;
 import java.awt.color.*;
 
