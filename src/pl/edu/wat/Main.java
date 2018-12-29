@@ -20,6 +20,57 @@ import java.util.*;
 public class Main {
 
     private static LinkedList<ImportDeclaration> importNames = new LinkedList<>();
+    private static LinkedList<Import> importStrings = new LinkedList<>();
+
+
+    public static void sortImports(){
+
+        //wysunięcie java na początek
+
+        //sortowanie w podgrupach
+
+        Set<String> uniqueFirstPart = new HashSet<>();
+        LinkedList<Import> importNamesPom = new LinkedList<>();
+
+        for(int i=0; i<importStrings.size(); i++){
+            uniqueFirstPart.add(importStrings.get(i).importParts.get(0));
+        }
+        for (String s : uniqueFirstPart) { //1 wybrany początek
+            System.out.println(s); //dla testu
+
+            for(Import in : importStrings) {
+
+                if (in.importParts.get(0).equals(s))
+                    importNamesPom.add(in);
+            }
+
+            for(Import im : importNamesPom)
+                System.out.println(im.toString());
+
+                Collections.sort(importNamesPom, new Comparator<Import>() {
+                    @Override
+                    public int compare(Import i1, Import i2) {
+                        return i1.importParts.get(1).compareTo(i2.importParts.get(1));
+                    }
+                });
+
+            //wstawienie posortowanego zbioru do oryginału
+            int incI=0;
+            int incP=0;
+
+            for(Import in : importStrings) {
+                if (in.importParts.get(0).equals(s)) {
+                    importStrings.set(incI, importNamesPom.get(incP));
+                    incP++;
+                }
+                incI++;
+            }
+
+
+        importNamesPom.clear();
+        }
+
+    }
 
     public static Name returnFirstPart(ImportDeclaration id){
         Name firstPart = new Name("null");
@@ -94,7 +145,7 @@ public class Main {
         new ImportNamesCollector().visit(cu, null);
 
 
-        importNames.forEach(n -> System.out.println("Import Name Collected: " + n.getNameAsString()+
+        importNames.forEach(n -> System.out.println("Import Name Collected: " + n.getName()+
                 " ,Identifier = " + n.getName().getIdentifier()
                 + " ,getChildNodes() = " + n.getChildNodes()
         + " ,getChildNodes().get(0) = " + n.getChildNodes().get(0)
@@ -102,19 +153,28 @@ public class Main {
        // + " ,getName().getQualifier().get().getQualifier() = " + n.getName().getQualifier().get().getQualifier().get().getQualifier()));
 
 
-        System.out.println("TESTTTT= " + importNames.get(2).getName().getQualifier().get().getQualifier().get().getQualifier().get().getIdentifier());
+        //System.out.println("TESTTTT= " + importNames.get(2).getName().getQualifier().get().getQualifier().get().getQualifier().get().getIdentifier());
 
 
-        for(int i=0; i<importNames.size(); i++)
-        System.out.println("FirstValue dla " + importNames.get(i).getName() + " = " + returnFirstPart(importNames.get(i)));
-
+        /*for(int i=0; i<importNames.size(); i++)
+        System.out.println("FirstValue dla " + importNames.get(i).getName() + " = " + returnFirstPart(importNames.get(i)));*/
+/*
        Collections.sort(importNames, new Comparator<ImportDeclaration>() {
            @Override
            public int compare(ImportDeclaration o1, ImportDeclaration o2) {
                 return returnFirstPart(o1).toString().compareTo(returnFirstPart(o2).toString());
            }
-       });
+       });*/
 
+    Collections.sort(importStrings, new Comparator<Import>() {
+        @Override
+        public int compare(Import i1, Import i2) {
+            return i1.importParts.get(0).compareTo(i2.importParts.get(0));
+        }
+    });
+
+
+/*
         int minJavaIndex = findMinJava();
         int minNonJavaIndex = findMinNonJava();
 
@@ -130,18 +190,22 @@ public class Main {
             }
         }
 
-
+*/
 
         //for(int i=0)
 
-
-
        importNames.forEach(n -> System.out.println("Sorted import Name Collected: " + n));
 
-        for(int i=0; i<importNames.size(); i++){
+
+        for(Import i : importStrings){
+            System.out.println("Test of a new class = " + i.toString());
+        }
+
+        sortImports();
+        for(int i=0; i<importStrings.size(); i++){
             //cu.setImport(i, importNames.get(i));
             //ImportDeclaration id = new ImportDeclaration()
-            cu.setImport(i, new ImportDeclaration(new Name("java.util" + i), true, true));
+            cu.setImport(i, new ImportDeclaration(new Name(importStrings.get(i).toString()), importStrings.get(i).isStatic, importStrings.get(i).isAsterisk));
             //cu.addImport("java.util" + i, true, true);
         }
         /*for(int i=0; i<importNames.size(); i++){
@@ -160,7 +224,7 @@ public class Main {
         File[] files = {new File(alteredFileName)};
         String[] options = { "-d", "out//production//Synthesis" };
 
-        importNames.forEach(n -> System.out.println("LinkedList after change " + n));
+        //importNames.forEach(n -> System.out.println("LinkedList after change " + n));
 
     }
 
@@ -170,6 +234,7 @@ public class Main {
         public void visit(ImportDeclaration id, Void arg){
             super.visit(id, null);
             importNames.add(id);
+            importStrings.add(new Import(id, id.isStatic(), id.isAsterisk()));
         }
 
     }

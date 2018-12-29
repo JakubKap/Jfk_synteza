@@ -50,6 +50,7 @@ public class Import {
         for(int i=0; i<importParts.size(); i++){
             if(i>0)
                 result+="."+importParts.get(i);
+            else result=importParts.get(i);
         }
 
         return result;
