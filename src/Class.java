@@ -1,4 +1,5 @@
 import static java.lang.System.*;
+import static java.lang.String.*;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
