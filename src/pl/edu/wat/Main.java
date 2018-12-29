@@ -37,8 +37,30 @@ public class Main {
         return firstPart;
     }
 
-    public static List <ImportDeclaration> sortImports(List <ImportDeclaration> importNames){
-        List<ImportDeclaration> javaBegin = new ArrayList<>();
+    public static int findMinJava(LinkedList <ImportDeclaration> importNames){
+        int index= -1;
+
+        for(int i=0; i<importNames.size(); i++){
+            if(returnFirstPart(importNames.get(i)).equals("java"))
+                return i;
+        }
+
+            return index;
+    }
+
+    public static int findMinNonJava(LinkedList <ImportDeclaration> importNames){
+        int index= -1;
+
+        for(int i=0; i<importNames.size(); i++){
+            if(!returnFirstPart(importNames.get(i)).equals("java"))
+                return i;
+        }
+
+        return index;
+    }
+    /*
+    public static LinkedList <ImportDeclaration> sortImports(LinkedList <ImportDeclaration> importNames){
+        LinkedList<ImportDeclaration> javaBegin = new LinkedList<>();
 
         for(ImportDeclaration id : importNames){
             if(id.getNameAsString().startsWith("java."))
@@ -47,7 +69,7 @@ public class Main {
 
         return javaBegin;
     }
-
+*/
 
 
     public static void main(String[] args) throws IOException {
@@ -65,7 +87,7 @@ public class Main {
         }
 
 
-        List<ImportDeclaration> importNames = new ArrayList<>();
+        LinkedList<ImportDeclaration> importNames = new LinkedList<>();
         new ImportNamesCollector().visit(cu, importNames);
 
 
@@ -87,14 +109,40 @@ public class Main {
            }
        });
 
-       
+        /*int minJavaIndex = findMinJava(importNames);
+        int minNonJavaIndex = findMinNonJava(importNames);
+*/
+        /*
+        int minNonJavaIndex = 0;
+        for(int i=0; i<importNames.size(); i++){
+            if(returnFirstPart(importNames.get(i)).equals("java")) {
+                Collections.swap(importNames, minNonJavaIndex, i);
+                minNonJavaIndex++;
+                System.out.println("success");
+            }
+        }*/
+
+
 
 
        importNames.forEach(n -> System.out.println("Sorted import Name Collected: " + n));
 
+/*
+       while(importNames.size() > 0){
+           System.out.println("Size of importNames = " + importNames.size());
+           System.out.println(importNames.getFirst());
+           importNames.removeFirst();
+       }
+*/
+
+
+        new ReplaceImportDeclaration().visit(cu, importNames);
+
+
+
         //importNames.forEach(n -> System.out.println("MetaModel: " + n.getName()));
 /*
-        List<ImportDeclaration> importNames2;
+        LinkedList<ImportDeclaration> importNames2;
         importNames2 = sortImports(importNames);
 */
         //importNames2.forEach(n -> System.out.println("importNames2: " + n.getName()));
@@ -113,8 +161,8 @@ public class Main {
     }
 
     //zapisanie do kolekcji wszystkich ImportDeclaration
-    private static class ImportNamesCollector extends VoidVisitorAdapter<List<ImportDeclaration>>{
-        public void visit(ImportDeclaration id, List<ImportDeclaration> collector){
+    private static class ImportNamesCollector extends VoidVisitorAdapter<LinkedList<ImportDeclaration>>{
+        public void visit(ImportDeclaration id, LinkedList<ImportDeclaration> collector){
             super.visit(id, collector);
             collector.add(id);
         }
@@ -122,13 +170,19 @@ public class Main {
 
     }
 
-    private static class ReplaceImportDeclaration extends VoidVisitorAdapter<List<ImportDeclaration>>{
-        public void visit(ImportDeclaration id, List<ImportDeclaration> javaBegin){
-            super.visit(id, javaBegin);
-            if(!id.getNameAsString().startsWith("java.")){
-                System.out.println("Replaced value = " + id + " ,new value = " + javaBegin.get(0));
-                id.replace(javaBegin.get(0), id);
-            }
+    private static class ReplaceImportDeclaration extends VoidVisitorAdapter<LinkedList<ImportDeclaration>>{
+        public void visit(ImportDeclaration id, LinkedList<ImportDeclaration> importNames){
+
+            super.visit(id, importNames);
+            id.setName(importNames.getFirst().getName());
+            id.setStatic(importNames.getFirst().isStatic());
+            id.setAsterisk(importNames.getFirst().isAsterisk());
+
+
+            System.out.println("Size of importNames = " + importNames.size());
+            System.out.println(importNames.getFirst());
+
+            importNames.removeFirst();
 
         }
     }
