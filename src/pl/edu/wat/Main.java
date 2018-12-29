@@ -13,6 +13,7 @@ import com.github.javaparser.ast.visitor.ModifierVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.printer.DotPrinter;
 
+import javax.sound.sampled.Line;
 import javax.tools.*;
 import java.io.*;
 import java.util.*;
@@ -22,7 +23,6 @@ public class Main {
     private static LinkedList<ImportDeclaration> importNames = new LinkedList<>();
     private static LinkedList<Import> importStrings = new LinkedList<>();
 
-
     public static void sortImports(){
 
         //wysunięcie java na początek
@@ -31,6 +31,7 @@ public class Main {
 
         Set<String> uniqueFirstPart = new HashSet<>();
         LinkedList<Import> importNamesPom = new LinkedList<>();
+        LinkedList<Import> importNamesRest = new LinkedList<>();
 
 
         //znalezienie najdłuższego importu
@@ -58,6 +59,12 @@ public class Main {
                     if (in.importParts.size() > i+1) {
                         if (in.importParts.get(i).equals(s)){
                             importNamesPom.add(in);
+                        }
+                    }
+                    else if((in.importParts.size() == i+1) && in.isAsterisk){
+                        if (in.importParts.get(i).equals(s)){
+                            importNamesRest.add(in);
+                            System.out.println("success");
                         }
                     }
 
@@ -106,6 +113,35 @@ public class Main {
 
             }
         }
+
+        importNamesRest.forEach(n -> System.out.println("Wartość importNamesRest =  " + n));
+/*
+        int index=0;
+        for(Import im : importNamesRest) {
+            for (int i = 0; i < importStrings.size(); i++) {
+                if(importStrings.get(i).toString().startsWith(im.toString()) &&
+                        im.importParts.size() < importStrings.get(i).importParts.size()){
+
+                    for(int j=0; j<importStrings.size(); j++){
+                        if(importStrings.get(j).toString().equals(im.toString()))
+                            index=j;
+                    }
+
+                    if(i>0) {
+                        importStrings.set(i - 1, im);
+                        importStrings.remove(index);
+                    }
+                        else {
+                            importStrings.set(0, im);
+                            importStrings.remove(index);
+                            //importStrings.remove(importStrings.indexOf(im));
+                    }
+
+
+                }
+            }
+        }*/
+
     }
 
     public static Name returnFirstPart(ImportDeclaration id){
