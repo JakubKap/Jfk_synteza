@@ -8,6 +8,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.WhileStmt;
 import com.github.javaparser.ast.visitor.ModifierVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.printer.DotPrinter;
@@ -93,13 +94,16 @@ public class Main {
         new ImportNamesCollector().visit(cu, null);
 
 
-        importNames.forEach(n -> System.out.println("Import Name Collected: " + n.getNameAsString())); /*+
+        importNames.forEach(n -> System.out.println("Import Name Collected: " + n.getNameAsString()+
                 " ,Identifier = " + n.getName().getIdentifier()
                 + " ,getChildNodes() = " + n.getChildNodes()
         + " ,getChildNodes().get(0) = " + n.getChildNodes().get(0)
-        + " ,getQualifier.getIdentifier() = " + n.getName().getQualifier().get().getIdentifier()
-        + " ,getName().getQualifier().get().getQualifier() = " + n.getName().getQualifier().get().getQualifier().get().getQualifier()));
-*/
+        + " ,getQualifier.getIdentifier() = " + n.getName().getQualifier().get().getIdentifier()));
+       // + " ,getName().getQualifier().get().getQualifier() = " + n.getName().getQualifier().get().getQualifier().get().getQualifier()));
+
+
+        System.out.println("TESTTTT= " + importNames.get(2).getName().getQualifier().get().getQualifier().get().getQualifier().get().getIdentifier());
+
 
         for(int i=0; i<importNames.size(); i++)
         System.out.println("FirstValue dla " + importNames.get(i).getName() + " = " + returnFirstPart(importNames.get(i)));
@@ -128,13 +132,25 @@ public class Main {
 
 
 
+        //for(int i=0)
+
+
 
        importNames.forEach(n -> System.out.println("Sorted import Name Collected: " + n));
 
-
         for(int i=0; i<importNames.size(); i++){
-            cu.setImport(i, importNames.get(i));
+            //cu.setImport(i, importNames.get(i));
+            //ImportDeclaration id = new ImportDeclaration()
+            cu.setImport(i, new ImportDeclaration(new Name("java.util" + i), true, true));
+            //cu.addImport("java.util" + i, true, true);
         }
+        /*for(int i=0; i<importNames.size(); i++){
+            //cu.setImport(i, importNames.get(i));
+            //cu.getImport(i).remove();
+            cu.addImport("java.util" + i, true, true);
+        }*/
+
+
 
         cu.getClassByName("Class").get().setName("ClassAltered");
         try(FileWriter output = new FileWriter(new File(alteredFileName), false)) {
@@ -153,7 +169,6 @@ public class Main {
         @Override
         public void visit(ImportDeclaration id, Void arg){
             super.visit(id, null);
-
             importNames.add(id);
         }
 
