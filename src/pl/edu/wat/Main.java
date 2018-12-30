@@ -108,8 +108,8 @@ public class Main {
         for(int i=0; i<importStrings.size(); i++){
             if((i+1) < importStrings.size()){
                 if(importStrings.get(i).toString().toLowerCase().equals(importStrings.get(i+1).toString().toLowerCase())
-                        && importStrings.get(i).isAsterisk
-                        && !importStrings.get(i+1).isAsterisk)
+                        || (importStrings.get(i).isAsterisk && !importStrings.get(i+1).isAsterisk)
+                        || (!importStrings.get(i).isAsterisk && importStrings.get(i+1).isAsterisk))
                     Collections.swap(importStrings, i, i+1);
 
             }
@@ -161,9 +161,17 @@ public class Main {
 
         if(minJavaIndex>=0 && minNonJavaIndex>=0 && minNonJavaIndex < minJavaIndex) {
             for (int i = 0; i < importStrings.size(); i++) {
-                if (importStrings.get(i).toString().startsWith("java") && !importStrings.get(i).toString().startsWith("javax")) {
+                if (importStrings.get(i).toString().startsWith("java.util")) {
                     if(minNonJavaIndex < importStrings.size()) {
-                        Collections.swap(importStrings, i, minNonJavaIndex);
+
+                        if(importStrings.get(minNonJavaIndex).toString().charAt(0) < 'j'){
+                            importStrings.add(0,importStrings.get(minJavaIndex));
+                            importStrings.remove(minJavaIndex);
+                            minJavaIndex++;
+                        }
+                        else
+                            Collections.swap(importStrings, i, minNonJavaIndex);
+
                         minNonJavaIndex++;
                     }
                     System.out.println("success");
@@ -206,7 +214,7 @@ public class Main {
         int index= -1;
 
         for(int i=0; i<importStrings.size(); i++){
-            if(importStrings.get(i).toString().startsWith("java") && !importStrings.get(i).toString().startsWith("javax"))
+            if(importStrings.get(i).toString().startsWith("java.util"))
                 return i;
         }
 
@@ -217,7 +225,7 @@ public class Main {
         int index= -1;
 
         for(int i=0; i<importNames.size(); i++){
-            if(!importStrings.get(i).toString().startsWith("java") || importStrings.get(i).toString().startsWith("javax"))
+            if(!importStrings.get(i).toString().startsWith("java.util"))
                 return i;
         }
 
