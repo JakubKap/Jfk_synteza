@@ -105,15 +105,6 @@ public class Main {
 
         //poprawki
 
-        for(int i=0; i<importStrings.size(); i++){
-            if((i+1) < importStrings.size()){
-                if(importStrings.get(i).toString().toLowerCase().equals(importStrings.get(i+1).toString().toLowerCase())
-                        && (importStrings.get(i).isAsterisk && !importStrings.get(i+1).isAsterisk))
-                        //|| (!importStrings.get(i).isAsterisk && importStrings.get(i+1).isAsterisk))
-                    Collections.swap(importStrings, i, i+1);
-
-            }
-        }
 
 
         importNamesRest.forEach(n -> System.out.println("Wartość importNamesRest =  " + n));
@@ -177,6 +168,21 @@ public class Main {
         System.out.println("minJavaIndex after = " + minJavaIndex);
         System.out.println("minNonJavaIndex after = " + minNonJavaIndex);
 
+        for(int i=0; i<importStrings.size(); i++){
+            if((i+1) < importStrings.size()){
+                if((importStrings.get(i).toString().toLowerCase().equals(importStrings.get(i+1).toString().toLowerCase()))
+                        || (importStrings.get(i).toString().startsWith(importStrings.get(i+1).toString()))
+                        || (importStrings.get(i+1).toString().startsWith(importStrings.get(i).toString()))){
+
+                    System.out.println("first case = " + importStrings.get(i).toString() + " ,second case = " + importStrings.get(i + 1).toString());
+                    if(((!importStrings.get(i+1).toString().startsWith(importStrings.get(i).toString())
+                            || (importStrings.get(i).equals(importStrings.get(i+1)) && !importStrings.get(i).isAsterisk && importStrings.get(i+1).isAsterisk)
+                    ||(importStrings.get(i).equals(importStrings.get(i+1)) && importStrings.get(i).isAsterisk && !importStrings.get(i+1).isAsterisk))))
+                    Collections.swap(importStrings, i, i+1);
+                }
+
+            }
+        }
 
 
 
