@@ -159,7 +159,7 @@ public class Main {
 
 
         for(int i=0; i<importStrings.size(); i++){
-            if(importStrings.get(i).toString().startsWith("java")) {
+            if(importStrings.get(i).toString().startsWith("java") && !importStrings.get(i).toString().startsWith("javax")) {
                 Collections.swap(importStrings, i, minNonJavaIndex);
                 minNonJavaIndex++;
                 System.out.println("success");
@@ -313,7 +313,6 @@ public class Main {
         }*/
 
 
-
         cu.getClassByName("Class").get().setName("ClassAltered");
         try(FileWriter output = new FileWriter(new File(alteredFileName), false)) {
             output.write(cu.toString());
@@ -324,19 +323,6 @@ public class Main {
 
         //importNames.forEach(n -> System.out.println("LinkedList after change " + n));
 
-        LinkedList<Integer> list = new LinkedList<>();
-        list.add(0, 0);
-        list.add(1, 1);
-        list.add(2, 2);
-        list.add(3, 3);
-        list.add(4, 4);
-        list.add(5, 5);
-
-        list.remove(4);
-        list.add(1,4);
-
-
-        list.forEach(n -> System.out.println(n));
 
     }
 
@@ -347,6 +333,18 @@ public class Main {
             super.visit(id, null);
             importNames.add(id);
             importStrings.add(new Import(id, id.isStatic(), id.isAsterisk()));
+        }
+
+    }
+
+    //wstawienie nowej linii po sekcji z java.
+    private static class InsertSpace extends VoidVisitorAdapter<Void>{
+        @Override
+        public void visit(ImportDeclaration id, Void arg){
+            super.visit(id, null);
+
+            //MethodReferenceExpr met = new MethodReferenceExpr()
+
         }
 
     }
