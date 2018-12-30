@@ -1,19 +1,12 @@
 package pl.edu.wat;
-
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.TokenRange;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
-import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.*;
-import com.github.javaparser.ast.stmt.BlockStmt;
-import com.github.javaparser.ast.stmt.WhileStmt;
-import com.github.javaparser.ast.visitor.ModifierVisitor;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.printer.DotPrinter;
 
-import javax.sound.sampled.Line;
+
 import javax.tools.*;
 import java.io.*;
 import java.util.*;
@@ -117,7 +110,7 @@ public class Main {
                 if(importStrings.get(i).toString().toLowerCase().equals(importStrings.get(i+1).toString().toLowerCase())
                         && importStrings.get(i).isAsterisk
                         && !importStrings.get(i+1).isAsterisk)
-                Collections.swap(importStrings, i, i+1);
+                    Collections.swap(importStrings, i, i+1);
 
             }
         }
@@ -140,10 +133,10 @@ public class Main {
                         importStrings.remove(index);
                         importStrings.add(i, im);
                     }
-                        else {
-                            importStrings.remove(index);
-                            importStrings.add(0, im);
-                            //importStrings.remove(importStrings.indexOf(im));
+                    else {
+                        importStrings.remove(index);
+                        importStrings.add(0, im);
+                        //importStrings.remove(importStrings.indexOf(im));
                     }
 
                     System.out.println("\nZawartość zbioru po zmianie: ");
@@ -195,17 +188,17 @@ public class Main {
         int numOfDots = 0;
         char symbol =' ';
 
-            for (int i = 0; i < id.getNameAsString().length(); i++) {
-                symbol = id.getNameAsString().charAt(i);
-                if (symbol == '.')
-                    numOfDots++;
-            }
+        for (int i = 0; i < id.getNameAsString().length(); i++) {
+            symbol = id.getNameAsString().charAt(i);
+            if (symbol == '.')
+                numOfDots++;
+        }
 
-            firstPart = id.getName().getQualifier().get();
+        firstPart = id.getName().getQualifier().get();
 
-            for (int i = 0; i < numOfDots - 1; i++) {
-                firstPart = firstPart.getQualifier().get();
-            }
+        for (int i = 0; i < numOfDots - 1; i++) {
+            firstPart = firstPart.getQualifier().get();
+        }
         return firstPart;
     }
 
@@ -217,7 +210,7 @@ public class Main {
                 return i;
         }
 
-            return index;
+        return index;
     }
 
     public static int findMinNonJava(){
@@ -233,12 +226,10 @@ public class Main {
     /*
     public static LinkedList <ImportDeclaration> sortImports(LinkedList <ImportDeclaration> importNames){
         LinkedList<ImportDeclaration> javaBegin = new LinkedList<>();
-
         for(ImportDeclaration id : importNames){
             if(id.getNameAsString().startsWith("java."))
                 javaBegin.add(id);
         }
-
         return javaBegin;
     }
 */
@@ -289,11 +280,8 @@ public class Main {
 /*
         int minJavaIndex = findMinJava();
         int minNonJavaIndex = findMinNonJava();
-
         System.out.println("minJavaIndex = " + minJavaIndex);
         System.out.println("minNonJavaIndex = " + minNonJavaIndex);
-
-
         for(int i=0; i<importNames.size(); i++){
             if(importNames.get(i).getNameAsString().startsWith("java.")) {
                 Collections.swap(importNames, i, minNonJavaIndex);
@@ -301,12 +289,11 @@ public class Main {
                 System.out.println("success");
             }
         }
-
 */
 
         //for(int i=0)
 
-       importNames.forEach(n -> System.out.println("Sorted import Name Collected: " + n.toString()));
+        importNames.forEach(n -> System.out.println("Sorted import Name Collected: " + n.toString()));
 
 
         for(Import i : importStrings){
@@ -344,6 +331,21 @@ public class Main {
 
         //importNames.forEach(n -> System.out.println("LinkedList after change " + n));
 
+        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+        DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
+        try (StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null)) {
+            Iterable<? extends JavaFileObject> compilationUnits =
+                    fileManager.getJavaFileObjectsFromFiles(Arrays.asList(files));
+            compiler.getTask(
+                    null,
+                    fileManager,
+                    diagnostics,
+                    Arrays.asList(options),
+                    null,
+                    compilationUnits).call();
+
+            diagnostics.getDiagnostics().forEach(d -> System.out.println(d.getMessage(null)));
+        }
 
     }
 
