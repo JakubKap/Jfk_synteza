@@ -61,7 +61,7 @@ public class Main {
                             importNamesPom.add(in);
                         }
                     }
-                    else if((in.importParts.size() == i+1) && in.isAsterisk){
+                    else if((in.importParts.size() == i+1)){
                         if (in.importParts.get(i).equals(s)){
                             importNamesRest.add(in);
                             System.out.println("success");
@@ -115,32 +115,39 @@ public class Main {
         }
 
         importNamesRest.forEach(n -> System.out.println("Wartość importNamesRest =  " + n));
-/*
+
         int index=0;
         for(Import im : importNamesRest) {
             for (int i = 0; i < importStrings.size(); i++) {
                 if(importStrings.get(i).toString().startsWith(im.toString()) &&
                         im.importParts.size() < importStrings.get(i).importParts.size()){
 
+                    System.out.println("Znaleziona wartość w posortowanych importach = " + importStrings.get(i) + " dla początku = " + im.toString()+"\n");
                     for(int j=0; j<importStrings.size(); j++){
                         if(importStrings.get(j).toString().equals(im.toString()))
                             index=j;
                     }
 
                     if(i>0) {
-                        importStrings.set(i - 1, im);
                         importStrings.remove(index);
+                        importStrings.add(i, im);
                     }
                         else {
-                            importStrings.set(0, im);
                             importStrings.remove(index);
+                            importStrings.add(0, im);
                             //importStrings.remove(importStrings.indexOf(im));
                     }
 
+                    System.out.println("\nZawartość zbioru po zmianie: ");
+                    importStrings.forEach(n -> System.out.println("Wartość importStrings =  " + n));
 
+
+
+                    //jak został znaleziony i zamieniony, to przechodzi do następnego "początku"
+                    i=importStrings.size();
                 }
             }
-        }*/
+        }
 
     }
 
@@ -297,6 +304,20 @@ public class Main {
         String[] options = { "-d", "out//production//Synthesis" };
 
         //importNames.forEach(n -> System.out.println("LinkedList after change " + n));
+
+        LinkedList<Integer> list = new LinkedList<>();
+        list.add(0, 0);
+        list.add(1, 1);
+        list.add(2, 2);
+        list.add(3, 3);
+        list.add(4, 4);
+        list.add(5, 5);
+
+        list.remove(4);
+        list.add(1,4);
+
+
+        list.forEach(n -> System.out.println(n));
 
     }
 
