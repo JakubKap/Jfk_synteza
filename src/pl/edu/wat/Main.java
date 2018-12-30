@@ -105,12 +105,12 @@ public class Main {
 
         //poprawki
 
-        for (int i = 0; i < importStrings.size(); i++) {
-            if ((i + 1) < importStrings.size()) {
-                if (importStrings.get(i).toString().toLowerCase().equals(importStrings.get(i + 1).toString().toLowerCase())
-                        && importStrings.get(i).isAsterisk
-                        && !importStrings.get(i + 1).isAsterisk)
-                    Collections.swap(importStrings, i, i + 1);
+        for(int i=0; i<importStrings.size(); i++){
+            if((i+1) < importStrings.size()){
+                if(importStrings.get(i).toString().toLowerCase().equals(importStrings.get(i+1).toString().toLowerCase())
+                        || (importStrings.get(i).isAsterisk && !importStrings.get(i+1).isAsterisk)
+                        || (!importStrings.get(i).isAsterisk && importStrings.get(i+1).isAsterisk))
+                    Collections.swap(importStrings, i, i+1);
 
             }
         }
