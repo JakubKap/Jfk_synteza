@@ -148,33 +148,6 @@ public class Main {
             }
         }
 
-        //przesunięcie java na samą górę
-
-        int minJavaIndex = findMinJava();
-        int minNonJavaIndex = findMinNonJava();
-
-        System.out.println("minJavaIndex before = " + minJavaIndex);
-        System.out.println("minNonJavaIndex before = " + minNonJavaIndex);
-
-
-        if (minJavaIndex >= 0 && minNonJavaIndex >= 0 && minNonJavaIndex < minJavaIndex) {
-            for (int i = 0; i < importStrings.size(); i++) {
-                if (importStrings.get(i).toString().startsWith("java") && !importStrings.get(i).toString().startsWith("javax")) {
-                    if (minNonJavaIndex < importStrings.size()) {
-                        Collections.swap(importStrings, i, minNonJavaIndex);
-                        minNonJavaIndex++;
-                    }
-                    System.out.println("success");
-                }
-            }
-        }
-
-        if (minNonJavaIndex > 0)
-            firstNonJavaIndex = minNonJavaIndex;
-        System.out.println("minJavaIndex after = " + minJavaIndex);
-        System.out.println("minNonJavaIndex after = " + minNonJavaIndex);
-
-
         //wstawienie na końcu static
 
         LinkedList<Import> staticImports = new LinkedList<>();
@@ -206,7 +179,35 @@ public class Main {
 
         }
 
+
         if(numOfStaticImports > 0) firstStaticIndex=importStrings.size() - numOfStaticImports;
+
+        //przesunięcie java na samą górę
+
+        int minJavaIndex = findMinJava();
+        int minNonJavaIndex = findMinNonJava();
+
+        System.out.println("minJavaIndex before = " + minJavaIndex);
+        System.out.println("minNonJavaIndex before = " + minNonJavaIndex);
+
+
+        if (minJavaIndex >= 0 && minNonJavaIndex >= 0 && minNonJavaIndex < minJavaIndex) {
+            for (int i = 0; i < importStrings.size(); i++) {
+                if (importStrings.get(i).toString().startsWith("java") && !importStrings.get(i).toString().startsWith("javax") &&!importStrings.get(i).isStatic) {
+                    if (minNonJavaIndex < importStrings.size()) {
+                        Collections.swap(importStrings, i, minNonJavaIndex);
+                        minNonJavaIndex++;
+                    }
+                    System.out.println("success");
+                }
+            }
+        }
+
+        if (minNonJavaIndex > 0)
+            firstNonJavaIndex = minNonJavaIndex;
+        System.out.println("minJavaIndex after = " + minJavaIndex);
+        System.out.println("minNonJavaIndex after = " + minNonJavaIndex);
+
 
 
     }
@@ -350,8 +351,9 @@ public class Main {
         cu.getClassByName("Class").get().setName("ClassAltered");
         try(FileWriter output = new FileWriter(new File(alteredFileName), false)) {
 
-            if(firstNonJavaIndex>=0 && firstStaticIndex>0)
+            if(firstNonJavaIndex>=0 && firstStaticIndex>0) {
                 output.write(cu.toString().replace(importStrings.get(firstNonJavaIndex).orgImportDeclaration.toString(), "\n" + importStrings.get(firstNonJavaIndex).orgImportDeclaration.toString()).replace(importStrings.get(firstStaticIndex).orgImportDeclaration.toString(), "\n" + importStrings.get(firstStaticIndex).orgImportDeclaration.toString()));
+            }
 
 
             else if(firstNonJavaIndex>=0 && firstStaticIndex<0)
