@@ -22,6 +22,8 @@ import java.awt.TextArea;
 import java.awt.*;
 import java.awt.color.*;
 import java.awt.Stroke;
+import javax.swing.border.AbstractBorder;
+import java.awt.TextArea.*;
 
 
 public final class Class {

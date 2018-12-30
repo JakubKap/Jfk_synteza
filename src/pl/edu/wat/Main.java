@@ -77,7 +77,7 @@ public class Main {
                 Collections.sort(importNamesPom, new Comparator<Import>() {
                     @Override
                     public int compare(Import i1, Import i2) {
-                        return i1.importParts.get(inc+1).compareTo(i2.importParts.get(inc+1));
+                        return i1.importParts.get(inc+1).compareToIgnoreCase(i2.importParts.get(inc+1));
                     }
                 });
 
