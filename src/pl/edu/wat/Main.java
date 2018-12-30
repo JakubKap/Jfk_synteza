@@ -213,7 +213,7 @@ public class Main {
         int index= -1;
 
         for(int i=0; i<importStrings.size(); i++){
-            if(importStrings.get(i).toString().startsWith("java"))
+            if(importStrings.get(i).toString().startsWith("java") && !importStrings.get(i).toString().startsWith("javax"))
                 return i;
         }
 
@@ -224,7 +224,7 @@ public class Main {
         int index= -1;
 
         for(int i=0; i<importNames.size(); i++){
-            if(!importStrings.get(i).toString().startsWith("java"))
+            if(!importStrings.get(i).toString().startsWith("java") || importStrings.get(i).toString().startsWith("javax"))
                 return i;
         }
 

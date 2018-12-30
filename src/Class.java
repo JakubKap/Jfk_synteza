@@ -1,4 +1,7 @@
-
+import static java.lang.System.*;
+import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.FilerException;
+import javax.annotation.processing.SupportedAnnotationTypes.*;
 import javax.swing.UIDefaults.LazyInputMap;
 import static java.lang.String.*;
 import com.github.javaparser.JavaParser;
@@ -41,12 +44,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Properties;
+
 
 public final class Class {
     public static void main(String[] args) {
