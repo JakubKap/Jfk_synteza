@@ -149,6 +149,25 @@ public class Main {
             }
         }
 
+        //przesunięcie java na samą górę
+
+        int minJavaIndex = findMinJava();
+        int minNonJavaIndex = findMinNonJava();
+
+        System.out.println("minJavaIndex = " + minJavaIndex);
+        System.out.println("minNonJavaIndex = " + minNonJavaIndex);
+
+
+        for(int i=0; i<importStrings.size(); i++){
+            if(importStrings.get(i).toString().startsWith("java")) {
+                Collections.swap(importStrings, i, minNonJavaIndex);
+                minNonJavaIndex++;
+                System.out.println("success");
+            }
+        }
+
+
+
     }
 
     public static Name returnFirstPart(ImportDeclaration id){
@@ -174,8 +193,8 @@ public class Main {
     public static int findMinJava(){
         int index= -1;
 
-        for(int i=0; i<importNames.size(); i++){
-            if(importNames.get(i).getNameAsString().startsWith("java."))
+        for(int i=0; i<importStrings.size(); i++){
+            if(importStrings.get(i).toString().startsWith("java."))
                 return i;
         }
 
@@ -186,7 +205,7 @@ public class Main {
         int index= -1;
 
         for(int i=0; i<importNames.size(); i++){
-            if(!returnFirstPart(importNames.get(i)).equals("java"))
+            if(!importStrings.get(i).toString().startsWith("java."))
                 return i;
         }
 
