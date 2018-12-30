@@ -7,6 +7,7 @@ import java.util.LinkedList;
 
 public class Import {
     public LinkedList<String> importParts = new LinkedList<>();
+    public ImportDeclaration orgImportDeclaration;
     public boolean isStatic;
     public boolean isAsterisk;
     String[] array;
@@ -34,6 +35,8 @@ public class Import {
 */
 
     public Import(ImportDeclaration id, boolean isStatic, boolean isAsterisk){
+
+        orgImportDeclaration = id;
 
         array = id.getNameAsString().split("[.]");
 

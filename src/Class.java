@@ -1,4 +1,4 @@
-import static java.lang.System.*;
+
 import javax.swing.UIDefaults.LazyInputMap;
 import static java.lang.String.*;
 import com.github.javaparser.JavaParser;
@@ -9,6 +9,7 @@ import com.github.javaparser.ast.expr.MarkerAnnotationExpr.*;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import static java.lang.System.*;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import java.util.ArrayList;
 import java.io.FileInputStream;
@@ -64,4 +65,3 @@ public final class Class {
         out.print((char) 27 + "[0m");
     }
 }
-

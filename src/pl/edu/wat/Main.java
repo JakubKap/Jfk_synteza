@@ -22,10 +22,18 @@ public class Main {
 
     private static LinkedList<ImportDeclaration> importNames = new LinkedList<>();
     private static LinkedList<Import> importStrings = new LinkedList<>();
+    private static int firstNonJavaIndex = -1;
 
     public static void sortImports(){
 
-        //wysunięcie java na początek
+        //posortowanie po pierwszym członie
+
+        Collections.sort(importStrings, new Comparator<Import>() {
+            @Override
+            public int compare(Import i1, Import i2) {
+                return i1.importParts.get(0).compareTo(i2.importParts.get(0));
+            }
+        });
 
         //sortowanie w podgrupach
 
@@ -154,17 +162,28 @@ public class Main {
         int minJavaIndex = findMinJava();
         int minNonJavaIndex = findMinNonJava();
 
-        System.out.println("minJavaIndex = " + minJavaIndex);
-        System.out.println("minNonJavaIndex = " + minNonJavaIndex);
+        System.out.println("minJavaIndex before = " + minJavaIndex);
+        System.out.println("minNonJavaIndex before = " + minNonJavaIndex);
 
 
-        for(int i=0; i<importStrings.size(); i++){
-            if(importStrings.get(i).toString().startsWith("java") && !importStrings.get(i).toString().startsWith("javax")) {
-                Collections.swap(importStrings, i, minNonJavaIndex);
-                minNonJavaIndex++;
-                System.out.println("success");
+        if(minJavaIndex>=0 && minNonJavaIndex>=0 && minNonJavaIndex < minJavaIndex) {
+            for (int i = 0; i < importStrings.size(); i++) {
+                if (importStrings.get(i).toString().startsWith("java") && !importStrings.get(i).toString().startsWith("javax")) {
+                    if(minNonJavaIndex < importStrings.size()) {
+                        Collections.swap(importStrings, i, minNonJavaIndex);
+                        minNonJavaIndex++;
+                    }
+                    System.out.println("success");
+                }
             }
         }
+
+        if(minNonJavaIndex > 0)
+            firstNonJavaIndex = minNonJavaIndex;
+        System.out.println("minJavaIndex after = " + minJavaIndex);
+        System.out.println("minNonJavaIndex after = " + minNonJavaIndex);
+
+
 
 
 
@@ -194,7 +213,7 @@ public class Main {
         int index= -1;
 
         for(int i=0; i<importStrings.size(); i++){
-            if(importStrings.get(i).toString().startsWith("java."))
+            if(importStrings.get(i).toString().startsWith("java"))
                 return i;
         }
 
@@ -205,7 +224,7 @@ public class Main {
         int index= -1;
 
         for(int i=0; i<importNames.size(); i++){
-            if(!importStrings.get(i).toString().startsWith("java."))
+            if(!importStrings.get(i).toString().startsWith("java"))
                 return i;
         }
 
@@ -264,12 +283,7 @@ public class Main {
            }
        });*/
 
-    Collections.sort(importStrings, new Comparator<Import>() {
-        @Override
-        public int compare(Import i1, Import i2) {
-            return i1.importParts.get(0).compareTo(i2.importParts.get(0));
-        }
-    });
+
 
 
 /*
@@ -292,7 +306,7 @@ public class Main {
 
         //for(int i=0)
 
-       importNames.forEach(n -> System.out.println("Sorted import Name Collected: " + n));
+       importNames.forEach(n -> System.out.println("Sorted import Name Collected: " + n.toString()));
 
 
         for(Import i : importStrings){
@@ -300,12 +314,14 @@ public class Main {
         }
 
         sortImports();
+
         for(int i=0; i<importStrings.size(); i++){
             //cu.setImport(i, importNames.get(i));
             //ImportDeclaration id = new ImportDeclaration()
             cu.setImport(i, new ImportDeclaration(new Name(importStrings.get(i).toString()), importStrings.get(i).isStatic, importStrings.get(i).isAsterisk));
             //cu.addImport("java.util" + i, true, true);
         }
+
         /*for(int i=0; i<importNames.size(); i++){
             //cu.setImport(i, importNames.get(i));
             //cu.getImport(i).remove();
@@ -313,9 +329,14 @@ public class Main {
         }*/
 
 
+
         cu.getClassByName("Class").get().setName("ClassAltered");
         try(FileWriter output = new FileWriter(new File(alteredFileName), false)) {
-            output.write(cu.toString());
+            if(firstNonJavaIndex>=0) {
+                output.write(cu.toString().replace(importStrings.get(firstNonJavaIndex).orgImportDeclaration.toString(), "\n" + importStrings.get(firstNonJavaIndex).orgImportDeclaration.toString()));
+            }
+
+            else output.write(cu.toString());
         }
 
         File[] files = {new File(alteredFileName)};
@@ -348,4 +369,5 @@ public class Main {
         }
 
     }
+
 }
