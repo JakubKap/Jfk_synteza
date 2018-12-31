@@ -103,18 +103,6 @@ public class Main {
         }
 
 
-        //poprawki
-
-        for(int i=0; i<importStrings.size(); i++){
-            if((i+1) < importStrings.size()){
-                if(importStrings.get(i).toString().toLowerCase().equals(importStrings.get(i+1).toString().toLowerCase())
-                        || (importStrings.get(i).isAsterisk && !importStrings.get(i+1).isAsterisk)
-                        || (!importStrings.get(i).isAsterisk && importStrings.get(i+1).isAsterisk))
-                    Collections.swap(importStrings, i, i+1);
-
-            }
-        }
-
         importNamesRest.forEach(n -> System.out.println("Wartość importNamesRest =  " + n));
 
         int index = 0;
@@ -148,6 +136,118 @@ public class Main {
             }
         }
 
+
+
+        //przesunięcie java na samą górę
+
+        int minJavaIndex = findMinJava();
+        int minNonJavaIndex = findMinNonJava();
+
+        System.out.println("minJavaIndex before = " + minJavaIndex);
+        System.out.println("minNonJavaIndex before = " + minNonJavaIndex);
+
+
+
+        if(minJavaIndex>=0 && minNonJavaIndex>=0 && minNonJavaIndex < minJavaIndex) {
+            for (int i = 0; i < importStrings.size(); i++) {
+                if (importStrings.get(i).toString().startsWith("java") && !importStrings.get(i).toString().startsWith("javax")) {
+                    if(minNonJavaIndex < importStrings.size()) {
+                        Collections.swap(importStrings, i, minNonJavaIndex);
+                        minNonJavaIndex++;
+
+                        importStrings.forEach(n-> System.out.println("After swap :" + n));
+                    }
+                    System.out.println("success");
+                }
+            }
+        }
+
+        System.out.println("Przed końcowym sprzątaniem");
+        importStrings.forEach(n -> System.out.println(n));
+
+
+        //ponowne przesortowanie zbioru (bez namespace - bez java.)
+
+        //znalezienie najdłuższego importu
+        max = 0;
+        uniqueFirstPart.clear();
+        importNamesPom.clear();
+        importNamesRest.clear();
+
+        for(Import im : importStrings)
+            if(im.importParts.size() > max )//&& !im.importParts.get(0).equals("java"))
+                max = im.importParts.size();
+
+        System.out.println("max = " +max);
+
+        for(int i=0; i<max; i++) {
+
+            for (int j = 0; j < importStrings.size(); j++) {
+                if(importStrings.get(j).importParts.size() > i){
+                    uniqueFirstPart.add(importStrings.get(j).importParts.get(i));
+                    System.out.println("Sort 2 - Added unique " + importStrings.get(j).importParts.get(i) + " for " + importStrings.get(j).toString());
+                }
+
+            }
+
+
+            for (String s : uniqueFirstPart) { //1 wybrany początek
+                System.out.println("Drugi sort = " + s); //dla testu
+
+                for (Import in : importStrings) {
+
+                    if (in.importParts.size() > i+1) {
+                        if (in.importParts.get(i).equals(s)){
+                            importNamesPom.add(in);
+                        }
+                    }
+                    else if((in.importParts.size() == i+1)){
+                        if (in.importParts.get(i).equals(s)){
+                            importNamesRest.add(in);
+                            System.out.println("success");
+                        }
+                    }
+
+                }
+
+                for (Import im : importNamesPom)
+                    System.out.println("Drugi sort = " + im.toString());
+
+                final int incr = i;
+                Collections.sort(importNamesPom, new Comparator<Import>() {
+                    @Override
+                    public int compare(Import i1, Import i2) {
+                        return i1.importParts.get(incr+1).compareToIgnoreCase(i2.importParts.get(incr+1));
+                    }
+                });
+
+                //wstawienie posortowanego zbioru do oryginału
+                int incI = 0;
+                int incP = 0;
+
+                for (Import in : importStrings) {
+                    if (in.importParts.size() > i+1) {
+                        if(in.importParts.get(i).equals(s)) {
+                            importStrings.set(incI, importNamesPom.get(incP));
+                            incP++;
+                        }
+                    }
+                    incI++;
+                }
+
+
+                importNamesPom.clear();
+            }
+            uniqueFirstPart.clear();
+        }
+
+
+        if(minNonJavaIndex > 0)
+            firstNonJavaIndex = minNonJavaIndex;
+        System.out.println("minJavaIndex after = " + minJavaIndex);
+        System.out.println("minNonJavaIndex after = " + minNonJavaIndex);
+
+
         //wstawienie na końcu static
 
         LinkedList<Import> staticImports = new LinkedList<>();
@@ -164,7 +264,7 @@ public class Main {
         if (staticImports.size() > 0) {
 
             for (Import im : staticImports) {
-            importStrings.add(importStrings.size(), im);
+                importStrings.add(importStrings.size(), im);
 
             }
 
@@ -182,31 +282,28 @@ public class Main {
 
         if(numOfStaticImports > 0) firstStaticIndex=importStrings.size() - numOfStaticImports;
 
-        //przesunięcie java na samą górę
+        //poprawki
 
-        int minJavaIndex = findMinJava();
-        int minNonJavaIndex = findMinNonJava();
+        importStrings.forEach(n-> System.out.println("Przed poprawkami = " + n));
 
-        System.out.println("minJavaIndex before = " + minJavaIndex);
-        System.out.println("minNonJavaIndex before = " + minNonJavaIndex);
+        for(int i=0; i<importStrings.size(); i++){
+            if((i+1) < importStrings.size()){
+                if((importStrings.get(i).toString().toLowerCase().equals(importStrings.get(i+1).toString().toLowerCase()))
+                        || (importStrings.get(i).toString().startsWith(importStrings.get(i+1).toString()))
+                        || (importStrings.get(i+1).toString().startsWith(importStrings.get(i).toString()))){
 
+                    System.out.println("first case = " + importStrings.get(i).orgImportDeclaration + " ,second case = " + importStrings.get(i + 1).orgImportDeclaration);
 
-        if (minJavaIndex >= 0 && minNonJavaIndex >= 0 && minNonJavaIndex < minJavaIndex) {
-            for (int i = 0; i < importStrings.size(); i++) {
-                if (importStrings.get(i).toString().startsWith("java") && !importStrings.get(i).toString().startsWith("javax") &&!importStrings.get(i).isStatic) {
-                    if (minNonJavaIndex < importStrings.size()) {
-                        Collections.swap(importStrings, i, minNonJavaIndex);
-                        minNonJavaIndex++;
-                    }
-                    System.out.println("success");
+                    if(((!importStrings.get(i+1).toString().startsWith(importStrings.get(i).toString())
+                            || (importStrings.get(i).orgImportDeclaration.getNameAsString().equals(importStrings.get(i+1).orgImportDeclaration.getNameAsString()) && importStrings.get(i).isAsterisk && !importStrings.get(i+1).isAsterisk))))
+                        //||(importStrings.get(i).equals(importStrings.get(i+1)) && importStrings.get(i).isAsterisk && !importStrings.get(i+1).isAsterisk))))
+                        Collections.swap(importStrings, i, i+1);
                 }
+
             }
+            firstNonJavaIndex=findMinNonJava();
         }
 
-        if (minNonJavaIndex > 0)
-            firstNonJavaIndex = minNonJavaIndex;
-        System.out.println("minJavaIndex after = " + minJavaIndex);
-        System.out.println("minNonJavaIndex after = " + minNonJavaIndex);
 
 
 
