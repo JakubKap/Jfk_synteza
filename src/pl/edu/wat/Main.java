@@ -142,6 +142,8 @@ public class Main {
             }
         }
 
+
+
         //przesunięcie java na samą górę
 
         int minJavaIndex = findMinJava();
@@ -158,6 +160,8 @@ public class Main {
                     if(minNonJavaIndex < importStrings.size()) {
                         Collections.swap(importStrings, i, minNonJavaIndex);
                         minNonJavaIndex++;
+
+                        importStrings.forEach(n-> System.out.println("After swap :" + n));
                     }
                     System.out.println("success");
                 }
@@ -166,6 +170,83 @@ public class Main {
 
         System.out.println("Przed końcowym sprzątaniem");
         importStrings.forEach(n -> System.out.println(n));
+
+
+        //ponowne przesortowanie zbioru (bez namespace - bez java.)
+
+        //znalezienie najdłuższego importu
+        max = 0;
+        uniqueFirstPart.clear();
+        importNamesPom.clear();
+        importNamesRest.clear();
+
+        for(Import im : importStrings)
+            if(im.importParts.size() > max )//&& !im.importParts.get(0).equals("java"))
+                max = im.importParts.size();
+
+            System.out.println("max = " +max);
+
+        for(int i=0; i<max; i++) {
+
+            for (int j = 0; j < importStrings.size(); j++) {
+                if(importStrings.get(j).importParts.size() > i){
+                    uniqueFirstPart.add(importStrings.get(j).importParts.get(i));
+                    System.out.println("Sort 2 - Added unique " + importStrings.get(j).importParts.get(i) + " for " + importStrings.get(j).toString());
+                }
+
+            }
+
+
+            for (String s : uniqueFirstPart) { //1 wybrany początek
+                System.out.println("Drugi sort = " + s); //dla testu
+
+                for (Import in : importStrings) {
+
+                    if (in.importParts.size() > i+1) {
+                        if (in.importParts.get(i).equals(s)){
+                            importNamesPom.add(in);
+                        }
+                    }
+                    else if((in.importParts.size() == i+1)){
+                        if (in.importParts.get(i).equals(s)){
+                            importNamesRest.add(in);
+                            System.out.println("success");
+                        }
+                    }
+
+                }
+
+                for (Import im : importNamesPom)
+                    System.out.println("Drugi sort = " + im.toString());
+
+                final int inc = i;
+                Collections.sort(importNamesPom, new Comparator<Import>() {
+                    @Override
+                    public int compare(Import i1, Import i2) {
+                        return i1.importParts.get(inc+1).compareToIgnoreCase(i2.importParts.get(inc+1));
+                    }
+                });
+
+                //wstawienie posortowanego zbioru do oryginału
+                int incI = 0;
+                int incP = 0;
+
+                for (Import in : importStrings) {
+                    if (in.importParts.size() > i+1) {
+                        if(in.importParts.get(i).equals(s)) {
+                            importStrings.set(incI, importNamesPom.get(incP));
+                            incP++;
+                        }
+                    }
+                    incI++;
+                }
+
+
+                importNamesPom.clear();
+            }
+            uniqueFirstPart.clear();
+        }
+
 
         if(minNonJavaIndex > 0)
             firstNonJavaIndex = minNonJavaIndex;
