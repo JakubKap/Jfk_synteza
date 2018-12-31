@@ -302,6 +302,7 @@ public class Main {
 
             }
             firstNonJavaIndex=findMinNonJava();
+            if(firstNonJavaIndex == 0) firstNonJavaIndex=-1;
         }
 
 
