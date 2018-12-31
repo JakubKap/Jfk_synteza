@@ -151,6 +151,7 @@ public class Main {
         System.out.println("minNonJavaIndex before = " + minNonJavaIndex);
 
 
+
         if(minJavaIndex>=0 && minNonJavaIndex>=0 && minNonJavaIndex < minJavaIndex) {
             for (int i = 0; i < importStrings.size(); i++) {
                 if (importStrings.get(i).toString().startsWith("java") && !importStrings.get(i).toString().startsWith("javax")) {
@@ -163,10 +164,14 @@ public class Main {
             }
         }
 
+        System.out.println("Przed końcowym sprzątaniem");
+        importStrings.forEach(n -> System.out.println(n));
+
         if(minNonJavaIndex > 0)
             firstNonJavaIndex = minNonJavaIndex;
         System.out.println("minJavaIndex after = " + minJavaIndex);
         System.out.println("minNonJavaIndex after = " + minNonJavaIndex);
+
 
         for(int i=0; i<importStrings.size(); i++){
             if((i+1) < importStrings.size()){
@@ -174,10 +179,11 @@ public class Main {
                         || (importStrings.get(i).toString().startsWith(importStrings.get(i+1).toString()))
                         || (importStrings.get(i+1).toString().startsWith(importStrings.get(i).toString()))){
 
-                    System.out.println("first case = " + importStrings.get(i).toString() + " ,second case = " + importStrings.get(i + 1).toString());
+                    System.out.println("first case = " + importStrings.get(i).orgImportDeclaration + " ,second case = " + importStrings.get(i + 1).orgImportDeclaration);
+
                     if(((!importStrings.get(i+1).toString().startsWith(importStrings.get(i).toString())
-                            || (importStrings.get(i).equals(importStrings.get(i+1)) && !importStrings.get(i).isAsterisk && importStrings.get(i+1).isAsterisk)
-                    ||(importStrings.get(i).equals(importStrings.get(i+1)) && importStrings.get(i).isAsterisk && !importStrings.get(i+1).isAsterisk))))
+                            || (importStrings.get(i).orgImportDeclaration.getNameAsString().equals(importStrings.get(i+1).orgImportDeclaration.getNameAsString()) && importStrings.get(i).isAsterisk && !importStrings.get(i+1).isAsterisk))))
+                    //||(importStrings.get(i).equals(importStrings.get(i+1)) && importStrings.get(i).isAsterisk && !importStrings.get(i+1).isAsterisk))))
                     Collections.swap(importStrings, i, i+1);
                 }
 
@@ -256,7 +262,6 @@ public class Main {
             printWriter.print(printer.output(cu));
         }
 
-
         new ImportNamesCollector().visit(cu, null);
 
 
@@ -300,7 +305,7 @@ public class Main {
 
         //for(int i=0)
 
-        importNames.forEach(n -> System.out.println("Sorted import Name Collected: " + n.toString()));
+        importNames.forEach(n -> System.out.println("Sorted import Name Collected: " + n.getNameAsString()));
 
 
         for(Import i : importStrings){
