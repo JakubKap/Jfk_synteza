@@ -11,7 +11,7 @@ public class Import {
     public boolean isStatic;
     public boolean isAsterisk;
     String[] array;
-    
+
 
     public Import(ImportDeclaration id, boolean isStatic, boolean isAsterisk){
 
