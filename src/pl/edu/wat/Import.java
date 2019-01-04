@@ -11,28 +11,7 @@ public class Import {
     public boolean isStatic;
     public boolean isAsterisk;
     String[] array;
-
-/*
-    public static Name returnFirstPart(ImportDeclaration id){
-        Name firstPart = new Name("null");
-
-        int numOfDots = 0;
-        char symbol =' ';
-
-        for (int i = 0; i < id.getNameAsString().length(); i++) {
-            symbol = id.getNameAsString().charAt(i);
-            if (symbol == '.')
-                numOfDots++;
-        }
-
-        firstPart = id.getName().getQualifier().get();
-
-        for (int i = 0; i < numOfDots - 1; i++) {
-            firstPart = firstPart.getQualifier().get();
-        }
-        return firstPart;
-    }
-*/
+    
 
     public Import(ImportDeclaration id, boolean isStatic, boolean isAsterisk){
 

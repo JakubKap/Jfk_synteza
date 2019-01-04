@@ -1,5 +1,3 @@
-import java.*;
-import java.*;
 import java.applet.*;
 import java.awt.*;
 import java.awt.BasicStroke;
@@ -45,7 +43,6 @@ import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter.*;
 import com.github.javaparser.JavaParser;
-import javax.*;
 import javax.swing.*;
 import javax.swing.border.AbstractBorder;
 import javax.swing.JButton;
