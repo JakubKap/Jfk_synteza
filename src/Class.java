@@ -7,9 +7,7 @@ import java.util.LinkedList.*;
 
 
 import java.applet.*;
-import java.*;
 import javax.tools.*;
-import javax.*;
 import java.net.Socket;
 import java.net.BindException;
 import static java.lang.System.*;
@@ -27,7 +25,6 @@ import pl.edu.wat.Main;
 import pl.edu.wat.Main.*;
 import java.awt.Font.*;
 import java.awt.Stroke.*;
-import java.*;
 import javax.swing.UIDefaults;
 import java.awt.TextArea;
 import java.awt.*;
