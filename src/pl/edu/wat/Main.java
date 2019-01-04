@@ -233,9 +233,15 @@ public class Main {
 
         if (staticImports.size() > 0) {
 
-            for (Import im : staticImports) {
-                importStrings.add(importStrings.size(), im);
+            if(firstNonJavaIndex == -1) firstNonJavaIndex = importStrings.size();
 
+            for (Import im : staticImports) {
+                if(im.toString().startsWith("java.")){
+                    importStrings.add(firstNonJavaIndex, im);
+                    firstNonJavaIndex++;
+                }
+
+                else importStrings.add(importStrings.size()-1, im);
             }
 
         }
@@ -346,16 +352,9 @@ public class Main {
         cu.getClassByName("Class").get().setName("ClassAltered");
         try(FileWriter output = new FileWriter(new File(alteredFileName), false)) {
 
-            if(firstNonJavaIndex>=0 && firstStaticIndex>0) {
-                output.write(cu.toString().replace(importStrings.get(firstNonJavaIndex).orgImportDeclaration.toString(), "\n" + importStrings.get(firstNonJavaIndex).orgImportDeclaration.toString()).replace(importStrings.get(firstStaticIndex).orgImportDeclaration.toString(), "\n" + importStrings.get(firstStaticIndex).orgImportDeclaration.toString()));
-            }
-
-
-            else if(firstNonJavaIndex>=0 && firstStaticIndex<0)
+            if(firstNonJavaIndex>=0) {
                 output.write(cu.toString().replace(importStrings.get(firstNonJavaIndex).orgImportDeclaration.toString(), "\n" + importStrings.get(firstNonJavaIndex).orgImportDeclaration.toString()));
-
-                else if(firstNonJavaIndex<0 && firstStaticIndex>0)
-                output.write(cu.toString().replace(importStrings.get(firstStaticIndex).orgImportDeclaration.toString(), "\n" + importStrings.get(firstStaticIndex).orgImportDeclaration.toString()));
+            }
 
                  else
                     output.write(cu.toString());
